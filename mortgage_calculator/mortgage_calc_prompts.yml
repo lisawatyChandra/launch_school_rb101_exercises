@@ -5,6 +5,6 @@ invalid_number: "Hmm... that doesn't look like a valid number. Please enter posi
 numeric_only: 'Please enter only numeric characters'
 annual_interest_rate: 'What is the annual interest rate?'
 loan_duration: 'What is the loan duration (in years)?'
-perform_another: 'Would you like to perform another calculation? (Press Y to calculate again'
+perform_another: 'Would you like to perform another calculation? (Press Y to calculate again)'
 thank_you: 'Thank you for using the mortgage calculator!'
 good_bye: 'Good bye!'
