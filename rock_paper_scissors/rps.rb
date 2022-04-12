@@ -72,6 +72,17 @@ def display_round_winner(game_outcome)
   end
 end
 
+def display_grand_winner(scoreboard)
+  if scoreboard[:user] == 3
+    prompt("You've won with a score of #{scoreboard[:user]} to #{scoreboard[:computer]}!")
+  else
+    prompt("Computer have won with a score of #{scoreboard[:computer]} to #{scoreboard[:user]}!")
+  end
+  scoreboard[:user] = 0
+  scoreboard[:computer] = 0
+  sleep(3)
+end
+
 # main program
 USER_VALID_CHOICE = %w[r p sc l sp].freeze
 COMPUTER_VALID_CHOICE = %w[ROCK PAPER SCISSORS].freeze
@@ -94,19 +105,10 @@ loop do
 
     display_round_winner(round_outcome)
     update_score(scoreboard, round_outcome)
-    # p scoreboard
     match_over = match_over?(scoreboard)
-    if match_over == true
-      if scoreboard[:user] == 3
-        prompt("You've won with a score of #{scoreboard[:user]} to #{scoreboard[:computer]}!")
-      else
-        prompt("Computer have won with a score of #{scoreboard[:computer]} to #{scoreboard[:user]}!")
-      end
-      scoreboard[:user] = 0
-      scoreboard[:computer] = 0
-      sleep(3)
-      break
-    end
+    display_grand_winner(scoreboard) if match_over == true
+    break if match_over == true
+
     sleep(2)
     system('clear')
   end
@@ -115,8 +117,6 @@ loop do
   play_again = gets.chomp
 
   break unless play_again.downcase.start_with?('y')
-
-  system('clear')
 end
 
 system('clear')
