@@ -33,6 +33,10 @@ end
 
 VALID_CHOICE = %w[rock paper scissors].freeze
 
+system('clear')
+
+prompt('Welcome to Rock, Paper, and Scissors!')
+
 play_again = ''
 loop do
   user_choice = ''
@@ -60,6 +64,8 @@ loop do
 
   system('clear')
 end
+
+system('clear')
 
 prompt('Thank you for playing Rock, Paper, Scissors!')
 prompt('Goodbye!')
