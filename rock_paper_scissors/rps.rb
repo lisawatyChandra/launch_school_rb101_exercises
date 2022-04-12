@@ -22,14 +22,14 @@ def play(round, scoreboard)
     sleep(2)
     system('clear')
   end
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/AbcSize
 
   display_scoreboard(round, scoreboard)
   display_grand_winner(round, scoreboard) if match_over?(scoreboard)
   sleep(3)
   system('clear')
 end
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/AbcSize
 
 def ask_user_choice
   user_choice = ''
@@ -113,7 +113,7 @@ def display_grand_winner(round, scoreboard)
   end
   scoreboard[:user] = 0
   scoreboard[:computer] = 0
-  sleep(3)
+  sleep(5)
 end
 
 # main program
@@ -134,7 +134,7 @@ loop do
 
   prompt('Do you want to play again? Type \'Y\' if yes')
   play_again = gets.chomp
-
+  sleep(2)
   break unless play_again.downcase.start_with?('y')
 end
 
