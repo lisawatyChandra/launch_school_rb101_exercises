@@ -3,11 +3,11 @@
 USER_VALID_CHOICE = %w[r p sc l sp].freeze
 COMPUTER_VALID_CHOICE = %w[ROCK PAPER SCISSORS].freeze
 WINNING_COMBINATIONS = {
-  'ROCK' => {'SCISSORS' => 'crushes', 'LIZARD' => 'crushes'},
-  'PAPER' => {'ROCK' => 'covers', 'SPOCK' => 'disproves'},
-  'SCISSORS' => {'PAPER' => 'cuts', 'LIZARD' => 'decapitates'},
-  'LIZARD' => {'SPOCK' => 'poisons', 'PAPER' => 'eats'},
-  'SPOCK' => {'ROCK' => 'vaporizes', 'SCISSORS' => 'smashes'}
+  'ROCK' => { 'SCISSORS' => 'crushes', 'LIZARD' => 'crushes' },
+  'PAPER' => { 'ROCK' => 'covers', 'SPOCK' => 'disproves' },
+  'SCISSORS' => { 'PAPER' => 'cuts', 'LIZARD' => 'decapitates' },
+  'LIZARD' => { 'SPOCK' => 'poisons', 'PAPER' => 'eats' },
+  'SPOCK' => { 'ROCK' => 'vaporizes', 'SCISSORS' => 'smashes' }
 }.freeze
 
 def prompt(message)
