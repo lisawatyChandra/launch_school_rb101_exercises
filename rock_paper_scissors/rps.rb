@@ -1,19 +1,21 @@
+# frozen_string_literal: true
+
 def prompt(message)
   puts "\n=> #{message}"
   sleep 2
 end
 
 def determine_game_outcome(user, computer)
-  if (user == 'rock' && computer == 'scissors') || 
-    (user == 'paper' && computer == 'rock') || 
-    (user == 'scissors' && computer == 'paper')
-    return 'user'
-  elsif (user == 'scissors' && computer == 'rock') || 
-    (user == 'rock' && computer == 'paper') || 
-    (user == 'paper' && computer == 'scissors')
-    return 'computer'
+  if (user == 'rock' && computer == 'scissors') ||
+     (user == 'paper' && computer == 'rock') ||
+     (user == 'scissors' && computer == 'paper')
+    'user'
+  elsif (user == 'scissors' && computer == 'rock') ||
+        (user == 'rock' && computer == 'paper') ||
+        (user == 'paper' && computer == 'scissors')
+    'computer'
   else
-    return "neither"
+    'neither'
   end
 end
 
@@ -27,17 +29,18 @@ def display_result(game_outcome)
   end
 end
 
-VALID_CHOICE = ['rock', 'paper', 'scissors']
+VALID_CHOICE = %w[rock paper scissors].freeze
 
 play_again = ''
 loop do
   user_choice = ''
   loop do
-    prompt("Choose one: rock, paper, scissors")
+    prompt('Choose one: rock, paper, scissors')
     user_choice = gets.chomp
 
     break if VALID_CHOICE.include?(user_choice)
-    prompt("That was an invalid choice.")
+
+    prompt('That was an invalid choice.')
   end
 
   computer_choice = VALID_CHOICE.sample
@@ -52,8 +55,9 @@ loop do
   play_again = gets.chomp
 
   break unless play_again.downcase.start_with?('y')
+
   system('clear')
 end
 
-prompt("Thank you for playing Rock, Paper, Scissors!")
-prompt("Goodbye!")
+prompt('Thank you for playing Rock, Paper, Scissors!')
+prompt('Goodbye!')
