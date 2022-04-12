@@ -14,6 +14,8 @@ def ask_user_choice
     break if USER_VALID_CHOICE.include?(user_choice)
 
     prompt('That was an invalid choice.')
+    sleep(2)
+    system('clear')
   end
   user_choice
 end
@@ -95,20 +97,20 @@ scoreboard = { user: 0, computer: 0 }
 system('clear')
 
 prompt('Welcome to Rock, Paper, Scissors, Lizard, and Spock!')
+sleep(2)
 
 play_again = ''
 loop do
+  system('clear')
   loop do
-    display_scoreboard(scoreboard)
     user_choice = parse_user_choice(ask_user_choice)
     computer_choice = COMPUTER_VALID_CHOICE.sample
-
     prompt("You chose #{user_choice}, computer chose #{computer_choice}.")
-
     round_outcome = outcome_each_round(user_choice, computer_choice)
-
     display_round_winner(round_outcome)
     update_score(scoreboard, round_outcome)
+
+    display_scoreboard(scoreboard)
     match_over = match_over?(scoreboard)
     display_grand_winner(scoreboard) if match_over?(scoreboard)
     break if match_over
