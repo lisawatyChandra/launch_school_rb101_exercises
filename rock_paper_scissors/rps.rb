@@ -3,11 +3,11 @@
 USER_VALID_CHOICE = %w[r p sc l sp].freeze
 COMPUTER_VALID_CHOICE = %w[ROCK PAPER SCISSORS].freeze
 WINNING_COMBINATIONS = {
-  'ROCK' => %w[SCISSORS LIZARD],
-  'PAPER' => %w[ROCK SPOCK],
-  'SCISSORS' => %w[PAPER LIZARD],
-  'LIZARD' => %w[SPOCK PAPER],
-  'SPOCK' => %w[ROCK SCISSORS]
+  'ROCK' => {'SCISSORS' => 'crushes', 'LIZARD' => 'crushes'},
+  'PAPER' => {'ROCK' => 'covers', 'SPOCK' => 'disproves'},
+  'SCISSORS' => {'PAPER' => 'cuts', 'LIZARD' => 'decapitates'},
+  'LIZARD' => {'SPOCK' => 'poisons', 'PAPER' => 'eats'},
+  'SPOCK' => {'ROCK' => 'vaporizes', 'SCISSORS' => 'smashes'}
 }.freeze
 
 def prompt(message)
@@ -23,10 +23,12 @@ def play(round, scoreboard)
     computer_choice = COMPUTER_VALID_CHOICE.sample
     prompt("You chose #{user_choice}, computer chose #{computer_choice}.")
     round_outcome = outcome_each_round(user_choice, computer_choice)
+    comment_each_round(user_choice, computer_choice)
     round += 1
     display_round_winner(round_outcome)
     update_score(scoreboard, round_outcome)
     match_over = match_over?(scoreboard)
+    sleep(2)
     break if match_over
 
     sleep(2)
@@ -66,22 +68,33 @@ def parse_user_choice(user_choice)
 end
 
 def outcome_each_round(user, computer)
-  if WINNING_COMBINATIONS[user].include?(computer)
+  if WINNING_COMBINATIONS[user].keys.include?(computer)
     'user'
-  elsif WINNING_COMBINATIONS[computer].include?(user)
+  elsif WINNING_COMBINATIONS[computer].keys.include?(user)
     'computer'
   else
     'neither'
   end
 end
 
+def comment_each_round(user, computer)
+  user_wins = WINNING_COMBINATIONS[user][computer]
+  computer_wins = WINNING_COMBINATIONS[computer][user]
+
+  if outcome_each_round(user, computer) == 'user'
+    prompt("#{user} #{user_wins} #{computer}!")
+  elsif outcome_each_round(user, computer) == 'computer'
+    prompt("#{computer} #{computer_wins} #{user}!")
+  end
+end
+
 def display_round_winner(game_outcome)
   if game_outcome == 'user'
-    puts 'You win!'
+    prompt('You win!')
   elsif game_outcome == 'computer'
-    puts 'Computer wins!'
+    prompt('Computer wins!')
   elsif game_outcome == 'neither'
-    puts 'It\'s a tie!'
+    prompt('It\'s a tie!')
   end
 end
 
