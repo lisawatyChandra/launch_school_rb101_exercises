@@ -4,6 +4,20 @@ def prompt(message)
   puts "\n=> #{message}"
 end
 
+def ask_user_choice
+  user_choice = ''
+  loop do
+    prompt('Choose one: [Rock, Paper, Scissors, Lizard, Spock]')
+    prompt('Please type r for Rock, p for Paper, sc for Scissors, l for Lizard, sp for Spock')
+    user_choice = gets.chomp
+
+    break if USER_VALID_CHOICE.include?(user_choice)
+
+    prompt('That was an invalid choice.')
+  end
+  user_choice
+end
+
 def parse_user_choice(user_choice)
   case user_choice
   when 'r' then 'ROCK'
@@ -22,7 +36,7 @@ WINNING_COMBINATIONS = {
   'SPOCK' => %w[ROCK SCISSORS]
 }.freeze
 
-def determine_game_outcome(user, computer)
+def outcome_each_round(user, computer)
   if WINNING_COMBINATIONS[user].include?(computer)
     'user'
   elsif WINNING_COMBINATIONS[computer].include?(user)
@@ -32,7 +46,23 @@ def determine_game_outcome(user, computer)
   end
 end
 
-def display_result(game_outcome)
+def update_score(scoreboard, outcome_each_round)
+  if outcome_each_round == 'user'
+    scoreboard[:user] += 1
+  elsif outcome_each_round == 'computer'
+    scoreboard[:computer] += 1
+  end
+end
+
+def match_over?(scoreboard)
+  if scoreboard[:user] == 3 || scoreboard[:computer] == 3
+    true
+  else
+    false
+  end
+end
+
+def display_round_winner(game_outcome)
   if game_outcome == 'user'
     puts 'You win!'
   elsif game_outcome == 'computer'
@@ -42,8 +72,10 @@ def display_result(game_outcome)
   end
 end
 
+# main program
 USER_VALID_CHOICE = %w[r p sc l sp].freeze
 COMPUTER_VALID_CHOICE = %w[ROCK PAPER SCISSORS].freeze
+scoreboard = { user: 0, computer: 0 }
 
 system('clear')
 
@@ -51,25 +83,33 @@ prompt('Welcome to Rock, Paper, Scissors, Lizard, and Spock!')
 
 play_again = ''
 loop do
-  user_choice = ''
   loop do
-    prompt('Choose one: [Rock, Paper, Scissors, Lizard, Spock]')
-    prompt('Please type r for Rock, p for Paper, sc for Scissors, l for Lizard, sp for Spock')
-    user_choice = gets.chomp
+    p scoreboard
+    user_choice = parse_user_choice(ask_user_choice)
+    computer_choice = COMPUTER_VALID_CHOICE.sample
 
-    break if USER_VALID_CHOICE.include?(user_choice)
+    prompt("You chose #{user_choice}, computer chose #{computer_choice}.")
 
-    prompt('That was an invalid choice.')
+    round_outcome = outcome_each_round(user_choice, computer_choice)
+
+    display_round_winner(round_outcome)
+    update_score(scoreboard, round_outcome)
+    # p scoreboard
+    match_over = match_over?(scoreboard)
+    if match_over == true
+      if scoreboard[:user] == 3
+        prompt("You've won with a score of #{scoreboard[:user]} to #{scoreboard[:computer]}!")
+      else
+        prompt("Computer have won with a score of #{scoreboard[:computer]} to #{scoreboard[:user]}!")
+      end
+      scoreboard[:user] = 0
+      scoreboard[:computer] = 0
+      sleep(3)
+      break
+    end
+    sleep(2)
+    system('clear')
   end
-
-  user_choice = parse_user_choice(user_choice)
-  computer_choice = COMPUTER_VALID_CHOICE.sample
-
-  prompt("You chose #{user_choice}, computer chose #{computer_choice}.")
-
-  game_outcome = determine_game_outcome(user_choice, computer_choice)
-
-  display_result(game_outcome)
 
   prompt('Do you want to play again?')
   play_again = gets.chomp
