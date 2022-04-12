@@ -5,14 +5,16 @@ def prompt(message)
   sleep 2
 end
 
+def win?(user, computer)
+  (user == 'rock' && computer == 'scissors') ||
+    (user == 'paper' && computer == 'rock') ||
+    (user == 'scissors' && computer == 'paper')
+end
+
 def determine_game_outcome(user, computer)
-  if (user == 'rock' && computer == 'scissors') ||
-     (user == 'paper' && computer == 'rock') ||
-     (user == 'scissors' && computer == 'paper')
+  if win?(user, computer)
     'user'
-  elsif (user == 'scissors' && computer == 'rock') ||
-        (user == 'rock' && computer == 'paper') ||
-        (user == 'paper' && computer == 'scissors')
+  elsif win?(computer, user)
     'computer'
   else
     'neither'
@@ -35,7 +37,7 @@ play_again = ''
 loop do
   user_choice = ''
   loop do
-    prompt('Choose one: rock, paper, scissors')
+    prompt("Choose one: #{VALID_CHOICE}")
     user_choice = gets.chomp
 
     break if VALID_CHOICE.include?(user_choice)
