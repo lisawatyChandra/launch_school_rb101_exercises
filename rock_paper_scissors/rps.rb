@@ -1,5 +1,15 @@
 # frozen_string_literal: true
 
+USER_VALID_CHOICE = %w[r p sc l sp].freeze
+COMPUTER_VALID_CHOICE = %w[ROCK PAPER SCISSORS].freeze
+WINNING_COMBINATIONS = {
+  'ROCK' => %w[SCISSORS LIZARD],
+  'PAPER' => %w[ROCK SPOCK],
+  'SCISSORS' => %w[PAPER LIZARD],
+  'LIZARD' => %w[SPOCK PAPER],
+  'SPOCK' => %w[ROCK SCISSORS]
+}.freeze
+
 def prompt(message)
   puts "\n=> #{message}"
 end
@@ -55,14 +65,6 @@ def parse_user_choice(user_choice)
   end
 end
 
-WINNING_COMBINATIONS = {
-  'ROCK' => %w[SCISSORS LIZARD],
-  'PAPER' => %w[ROCK SPOCK],
-  'SCISSORS' => %w[PAPER LIZARD],
-  'LIZARD' => %w[SPOCK PAPER],
-  'SPOCK' => %w[ROCK SCISSORS]
-}.freeze
-
 def outcome_each_round(user, computer)
   if WINNING_COMBINATIONS[user].include?(computer)
     'user'
@@ -70,6 +72,16 @@ def outcome_each_round(user, computer)
     'computer'
   else
     'neither'
+  end
+end
+
+def display_round_winner(game_outcome)
+  if game_outcome == 'user'
+    puts 'You win!'
+  elsif game_outcome == 'computer'
+    puts 'Computer wins!'
+  elsif game_outcome == 'neither'
+    puts 'It\'s a tie!'
   end
 end
 
@@ -95,16 +107,6 @@ def match_over?(scoreboard)
   end
 end
 
-def display_round_winner(game_outcome)
-  if game_outcome == 'user'
-    puts 'You win!'
-  elsif game_outcome == 'computer'
-    puts 'Computer wins!'
-  elsif game_outcome == 'neither'
-    puts 'It\'s a tie!'
-  end
-end
-
 def display_grand_winner(round, scoreboard)
   if scoreboard[:user] == 3
     prompt("After #{round} rounds, you've won with a score of #{scoreboard[:user]} to #{scoreboard[:computer]}!")
@@ -117,8 +119,6 @@ def display_grand_winner(round, scoreboard)
 end
 
 # main program
-USER_VALID_CHOICE = %w[r p sc l sp].freeze
-COMPUTER_VALID_CHOICE = %w[ROCK PAPER SCISSORS].freeze
 
 system('clear')
 
