@@ -4,6 +4,8 @@ def prompt(message)
   puts "\n=> #{message}"
 end
 
+# rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/AbcSize
 def play(round, scoreboard)
   loop do
     display_scoreboard(round, scoreboard)
@@ -20,6 +22,8 @@ def play(round, scoreboard)
     sleep(2)
     system('clear')
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   display_scoreboard(round, scoreboard)
   display_grand_winner(round, scoreboard) if match_over?(scoreboard)
