@@ -46,6 +46,10 @@ def outcome_each_round(user, computer)
   end
 end
 
+def display_scoreboard(scoreboard)
+  prompt("You scored: #{scoreboard[:user]}, Computer scored: #{scoreboard[:computer]}")
+end
+
 def update_score(scoreboard, outcome_each_round)
   if outcome_each_round == 'user'
     scoreboard[:user] += 1
@@ -95,7 +99,7 @@ prompt('Welcome to Rock, Paper, Scissors, Lizard, and Spock!')
 play_again = ''
 loop do
   loop do
-    p scoreboard
+    display_scoreboard(scoreboard)
     user_choice = parse_user_choice(ask_user_choice)
     computer_choice = COMPUTER_VALID_CHOICE.sample
 
@@ -106,8 +110,8 @@ loop do
     display_round_winner(round_outcome)
     update_score(scoreboard, round_outcome)
     match_over = match_over?(scoreboard)
-    display_grand_winner(scoreboard) if match_over == true
-    break if match_over == true
+    display_grand_winner(scoreboard) if match_over?(scoreboard)
+    break if match_over
 
     sleep(2)
     system('clear')
