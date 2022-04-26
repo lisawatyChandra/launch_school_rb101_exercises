@@ -21,7 +21,8 @@ def play(round, scoreboard)
     display_scoreboard(round, scoreboard)
     user_choice = parse_user_choice(ask_user_choice)
     computer_choice = COMPUTER_VALID_CHOICE.sample
-    prompt("You chose #{user_choice}, computer chose #{computer_choice}.")
+    prompt("You chose #{user_choice}, " \
+    "computer chose #{computer_choice}.")
     round_outcome = outcome_each_round(user_choice, computer_choice)
     comment_each_round(user_choice, computer_choice)
     round += 1
@@ -40,14 +41,19 @@ def play(round, scoreboard)
   sleep(3)
   system('clear')
 end
-# rubocop:enable Metrics/MethodLength
-# rubocop:enable Metrics/AbcSize
 
 def ask_user_choice
   user_choice = ''
   loop do
     prompt('Choose one: [Rock, Paper, Scissors, Lizard, Spock]')
-    prompt('Please type r for Rock, p for Paper, sc for Scissors, l for Lizard, sp for Spock')
+    prompt(<<~ARG)
+      Please type:
+          r  for Rock, 
+          p  for Paper, 
+          sc for Scissors,
+          l  for Lizard, 
+          sp for Spock
+    ARG
     user_choice = gets.chomp
     break if USER_VALID_CHOICE.include?(user_choice)
 
@@ -56,6 +62,8 @@ def ask_user_choice
   end
   user_choice
 end
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/AbcSize
 
 def parse_user_choice(user_choice)
   case user_choice
@@ -77,14 +85,14 @@ def outcome_each_round(user, computer)
   end
 end
 
-def comment_each_round(user, computer)
-  user_wins = WINNING_COMBINATIONS[user][computer]
-  computer_wins = WINNING_COMBINATIONS[computer][user]
+def comment_each_round(user_choice, computer_choice)
+  user_wins = WINNING_COMBINATIONS[user_choice][computer_choice]
+  computer_wins = WINNING_COMBINATIONS[computer_choice][user_choice]
 
-  if outcome_each_round(user, computer) == 'user'
-    prompt("#{user} #{user_wins} #{computer}!")
-  elsif outcome_each_round(user, computer) == 'computer'
-    prompt("#{computer} #{computer_wins} #{user}!")
+  if outcome_each_round(user_choice, computer_choice) == 'user'
+    prompt("#{user_choice} #{user_wins} #{computer_choice}!")
+  elsif outcome_each_round(user_choice, computer_choice) == 'computer'
+    prompt("#{computer_choice} #{computer_wins} #{user_choice}!")
   end
 end
 
@@ -100,8 +108,10 @@ end
 
 def display_scoreboard(round, scoreboard)
   prompt("Round: #{round}")
-  prompt("You scored: #{scoreboard[:user]}, Computer scored: #{scoreboard[:computer]}")
-  prompt('=======================================================================')
+  prompt("You scored: #{scoreboard[:user]}, " \
+  " Computer scored: #{scoreboard[:computer]}")
+  prompt('====================================' \
+  '=======================================')
 end
 
 def update_score(scoreboard, outcome_each_round)
@@ -122,9 +132,11 @@ end
 
 def display_grand_winner(round, scoreboard)
   if scoreboard[:user] == 3
-    prompt("After #{round} rounds, you've won with a score of #{scoreboard[:user]} to #{scoreboard[:computer]}!")
+    prompt("After #{round} rounds, you've won with a " \
+    " score of #{scoreboard[:user]} to #{scoreboard[:computer]}!")
   else
-    prompt("After #{round} rounds, computer have won with a score of #{scoreboard[:computer]} to #{scoreboard[:user]}!")
+    prompt("After #{round} rounds, computer have won with " \
+    " a score of #{scoreboard[:computer]} to #{scoreboard[:user]}!")
   end
   scoreboard[:user] = 0
   scoreboard[:computer] = 0
@@ -132,7 +144,6 @@ def display_grand_winner(round, scoreboard)
 end
 
 # main program
-
 system('clear')
 
 prompt('Welcome to Rock, Paper, Scissors, Lizard, and Spock!')
@@ -147,11 +158,11 @@ loop do
 
   prompt('Do you want to play again? Type \'Y\' if yes')
   play_again = gets.chomp
-  sleep(2)
+  sleep(1)
   break unless play_again.downcase.start_with?('y')
 end
 
 system('clear')
 
-prompt('Thank you for playing Rock, Paper, Scissors!')
+prompt('Thank you for playing Rock, Paper, Scissors, Lizard, Spock!')
 prompt('Goodbye!')
