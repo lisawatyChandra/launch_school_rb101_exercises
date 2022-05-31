@@ -15,7 +15,7 @@ def display_board(board)
   puts '     |     |'
   puts "  #{board[1]}  |  #{board[2]}  |  #{board[3]}"
   puts '     |     |'
-  puts '-----+-----+-----'
+  puts '-----+-------+-----'
   puts '     |     |'
   puts "  #{board[4]}  |  #{board[5]}  |  #{board[6]}"
   puts '     |     |'
@@ -33,7 +33,8 @@ def initialize_board
   end
   new_board
 end
-
+# the following method retrieves only
+# those squares that are still empty
 def empty_squares(board)
   board.keys.select do |num|
     board[num] == INITIAL_MARKER
@@ -64,6 +65,9 @@ end
 
 def someone_won?(board)
   !!detect_winner(board)
+  # placing `!!` before any object 
+  # turns the object into its 
+  # boolean equivalent
 end
 
 def detect_winner(board)
@@ -89,7 +93,17 @@ end
 
 # main loop
 loop do
+  # local variable `board` is initialized and
+  # assigned to a Hash object with 9 key-value
+  # pairs; each key indicates a position on a 
+  # 3x3 board, each value indicates a MARKER:
+  # an `'X'`, an `'O'`, or an `' '`.
   board = initialize_board
+  # here we initialize the state of the board, 
+  # not the way the board display even though
+  # `display_board` will use the initial state
+  # of the board to mark every square on the board
+  # with an empty space `' '`.
 
   loop do
     display_board(board)
@@ -98,6 +112,7 @@ loop do
 
     display_board(board)
     sleep(1)
+
     computer_places_piece!(board)
     break if someone_won?(board) || board_full?(board)
   end
