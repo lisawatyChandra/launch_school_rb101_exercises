@@ -51,6 +51,7 @@ end
 
 prompt(MESSAGES['welcome'])
 
+# main loop
 loop do
   loan_amount = get_input('loan_amount')
 

@@ -97,7 +97,7 @@ loop do
   # assigned to a Hash object with 9 key-value
   # pairs; each key indicates a position on a 
   # 3x3 board, each value indicates a MARKER:
-  # an `'X'`, an `'O'`, or an `' '`.
+  # an `'X'`, an `'O'`, or an empty space `' '`.
   board = initialize_board
   # here we initialize the state of the board, 
   # not the way the board display even though
