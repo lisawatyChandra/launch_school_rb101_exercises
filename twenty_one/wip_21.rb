@@ -1,4 +1,4 @@
-SUITS = %w(H D S C)
+SUITS = %w(♥ ♦ ♣ ♠)
 VALUES = %w(2 3 4 5 6 7 8 9 10 J Q K A)
 
 def initialize_deck
@@ -70,19 +70,22 @@ def play_again?
   answer.downcase.start_with?('y')
 end
 
-def compare_cards(player_cards, dealer_cards,player_total, dealer_total)
-  puts '""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""'
+def compare_cards(player_cards, dealer_cards, player_total, dealer_total)
+  puts ''
+  puts '"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""'
   puts "Dealer has #{dealer_cards} for a total of #{dealer_total}"
   puts "Player has #{player_cards} for a total of #{player_total}"
-  puts '""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""'
+  puts '"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""'
 end
 
 def declare_grand_winner(round_state)
+  # puts ''
   if round_state[:dealer] >= 5
     puts "Dealer is the Grandwinner!"
   elsif round_state[:player] >= 5
     puts "Player is the Grandwinner!"
   end
+  # puts ''
 end
 
 def grandwinner?(round_state)
@@ -95,7 +98,7 @@ def reset(round_state)
 end
 
 # main loop
-round_state = {player: 0, dealer: 0}
+round_state = { player: 0, dealer: 0 }
 loop do
   system 'clear'
   puts "at the top of the main loop: #{round_state}"
@@ -113,12 +116,11 @@ loop do
     dealer_cards << deck.pop
   end
 
-  puts "player cards: #{player_cards}"
   player_total = total(player_cards)
-  puts "player count: #{player_total}"
-  puts "dealer_cards: #{dealer_cards[0]} and ?"
   dealer_total = total(dealer_cards)
-  puts "dealer count: #{dealer_total}"
+
+  puts "player cards: #{player_cards}"
+  puts "dealer_cards: #{dealer_cards[0]} and ?"
 
   # player turn
   loop do
@@ -136,32 +138,36 @@ loop do
       player_cards << deck.pop
       puts "player cards are now: #{player_cards}"
       player_total = total(player_cards)
-      puts "player count is now: #{player_total}"
     end
 
     break if player_turn == 's' || busted?(player_total)
   end
 
-  puts ''
   if busted?(player_total)
-    round_state[:dealer] += 1    
+    round_state[:dealer] += 1
     compare_cards(player_cards, dealer_cards, player_total, dealer_total)
     display_results(player_total, dealer_total)
     puts ''
-    puts "at player busted: #{round_state}"
-    sleep 3
+    puts "scoreboard: #{round_state}"
+    puts ''
 
     declare_grand_winner(round_state)
     if grandwinner?(round_state)
       reset(round_state)
       play_again? ? next : break
     end
-    next
+
+    puts "Press Enter to continue: "
+    enter_to_continue = gets
+    if enter_to_continue
+      next
+    end
   else
     puts "You chose to stay at #{player_total}"
   end
 
   # dealer turn
+  puts ''
   loop do
     break if dealer_total >= 17
     puts "Dealer turn..."
@@ -169,24 +175,28 @@ loop do
     dealer_cards << deck.pop
     puts "Dealer cards are now: #{dealer_cards}"
     dealer_total = total(dealer_cards)
-    puts "Dealer count is now: #{dealer_total}"
+    sleep 2
   end
 
-  puts ''
   if busted?(dealer_total)
     round_state[:player] += 1
     compare_cards(player_cards, dealer_cards, player_total, dealer_total)
     display_results(player_total, dealer_total)
     puts ''
-    puts "at dealer busted: #{round_state}"
-    sleep 3
+    puts "scoreboard: #{round_state}"
+    puts ''
 
     declare_grand_winner(round_state)
     if grandwinner?(round_state)
       reset(round_state)
       play_again? ? next : break
     end
-    next
+
+    puts "Press Enter to continue: "
+    enter_to_continue = gets
+    if enter_to_continue
+      next
+    end
   else
     puts "Dealer stays at #{dealer_total}"
     puts ''
@@ -200,22 +210,23 @@ loop do
   when :player then round_state[:player] += 1
   when :dealer then round_state[:dealer] += 1
   end
-  
 
   puts ''
   display_results(player_total, dealer_total)
 
   puts ''
-  puts "at the bottom of the main loop: #{round_state}"
-  sleep 3
+  puts "scoreboard: #{round_state}"
   puts ''
-  puts "*****************************"
+  puts "**************************************"
 
   declare_grand_winner(round_state)
   if grandwinner?(round_state)
     reset(round_state)
     break unless play_again?
   end
+
+  puts "Press Enter to continue: "
+  gets
 end
 
 puts ''
