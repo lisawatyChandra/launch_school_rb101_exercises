@@ -47,8 +47,8 @@ def detect_result(player_total, dealer_total)
   end
 end
 
-def display_results(player_cards, dealer_cards)
-  result = detect_result(player_cards, dealer_cards)
+def display_results(player_total, dealer_total)
+  result = detect_result(player_total, dealer_total)
 
   case result
   when :player_busted
