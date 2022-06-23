@@ -1,5 +1,3 @@
-require 'pry'
-
 SUITS = %w(H D S C)
 VALUES = %w(2 3 4 5 6 7 8 9 10 J Q K A)
 
@@ -79,6 +77,23 @@ def compare_cards(player_cards, dealer_cards,player_total, dealer_total)
   puts '""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""'
 end
 
+def declare_grand_winner(round_state)
+  if round_state[:dealer] >= 5
+    puts "Dealer is the Grandwinner!"
+  elsif round_state[:player] >= 5
+    puts "Player is the Grandwinner!"
+  end
+end
+
+def grandwinner?(round_state)
+  round_state[:player] >= 5 || round_state[:dealer] >= 5
+end
+
+def reset(round_state)
+  round_state[:player] = 0
+  round_state[:dealer] = 0
+end
+
 # main loop
 round_state = {player: 0, dealer: 0}
 loop do
@@ -136,26 +151,11 @@ loop do
     puts "at player busted: #{round_state}"
     sleep 3
 
-    if round_state[:dealer] >= 5
-      puts "Dealer is the Grandwinner!"
-      if play_again?
-        round_state[:player] = 0
-        round_state[:dealer] = 0
-      else
-        break
-      end
+    declare_grand_winner(round_state)
+    if grandwinner?(round_state)
+      reset(round_state)
+      play_again? ? next : break
     end
-  
-    if round_state[:player] >= 5
-      puts "Player is the Grandwinner!"
-      if play_again?
-        round_state[:player] = 0
-        round_state[:dealer] = 0
-      else
-        break
-      end
-    end
-
     next
   else
     puts "You chose to stay at #{player_total}"
@@ -181,26 +181,11 @@ loop do
     puts "at dealer busted: #{round_state}"
     sleep 3
 
-    if round_state[:dealer] >= 5
-      puts "Dealer is the Grandwinner!"
-      if play_again?
-        round_state[:player] = 0
-        round_state[:dealer] = 0
-      else
-        break
-      end
+    declare_grand_winner(round_state)
+    if grandwinner?(round_state)
+      reset(round_state)
+      play_again? ? next : break
     end
-  
-    if round_state[:player] >= 5
-      puts "Player is the Grandwinner!"
-      if play_again?
-        round_state[:player] = 0
-        round_state[:dealer] = 0
-      else
-        break
-      end
-    end
-
     next
   else
     puts "Dealer stays at #{dealer_total}"
@@ -226,24 +211,10 @@ loop do
   puts ''
   puts "*****************************"
 
-  if round_state[:dealer] >= 5
-    puts "Dealer is the Grandwinner!"
-    if play_again?
-      round_state[:player] = 0
-      round_state[:dealer] = 0
-    else
-      break
-    end
-  end
-
-  if round_state[:player] >= 5
-    puts "Player is the Grandwinner!"
-    if play_again?
-      round_state[:player] = 0
-      round_state[:dealer] = 0
-    else
-      break
-    end
+  declare_grand_winner(round_state)
+  if grandwinner?(round_state)
+    reset(round_state)
+    break unless play_again?
   end
 end
 
