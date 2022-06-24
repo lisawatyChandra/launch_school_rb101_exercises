@@ -1,8 +1,27 @@
 SUITS = %w(♥ ♦ ♣ ♠)
 VALUES = %w(2 3 4 5 6 7 8 9 10 J Q K A)
 
+def greetings
+  puts "************************************************************"
+  puts ''
+  puts "Welcome to Twenty-One".center(60)
+  puts ''
+  puts "************************************************************"
+  sleep 2
+  puts ''
+  puts "First player to win five rounds wins the game."
+  sleep 3
+end
+
 def initialize_deck
   SUITS.product(VALUES).shuffle
+end
+
+def deal_initial_cards(deck, player_cards, dealer_cards)
+  2.times do
+    player_cards << deck.pop
+    dealer_cards << deck.pop
+  end
 end
 
 def total(cards)
@@ -67,11 +86,11 @@ def declare_round_winner(player_total, dealer_total)
 end
 
 def play_again?
-  puts "******************************************"
-  puts '*                                        *'
-  puts "* Would you like to play again? (y or n) *"
-  puts '*                                        *'
-  puts "******************************************"
+  puts "************************************************************"
+  puts ''
+  puts "#{'Would you like to play again? (y or n)'.center(60)}"
+  puts ''
+  puts "************************************************************"
   answer = gets.chomp
   sleep 0.25
   answer.downcase.start_with?('y')
@@ -97,21 +116,21 @@ def update_score_board!(round_winner, round_state)
   end
 end
 
-def display_round_results(round_state)
+def display_scoreboard(round_state)
   puts ''
   puts "************************************************************"
-  puts '*                                                          *'
-  puts "* Round #{round_state[:rounds]} scores: "
+  puts ''
+  puts "Round #{round_state[:rounds]} scores: "
     .concat("PLAYER - #{round_state[:player]}, ")
     .concat("DEALER - #{round_state[:dealer]}, ")
-    .concat("TIES - #{round_state[:ties]} *")
+    .concat("TIES - #{round_state[:ties]}")
     .center(60)
-  puts '*                                                          *'
+  puts ''
   puts "************************************************************"
 end
 
 def display_end_of_round_results(player_cards, dealer_cards, player_total,
-                            dealer_total, round_state)
+                                 dealer_total, round_state)
   display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
   declare_round_winner(player_total, dealer_total)
   display_scoreboard(round_state)
@@ -121,8 +140,10 @@ def declare_grand_winner(round_state)
   puts ''
   if round_state[:dealer] >= 5
     puts "After #{round_state[:rounds]} rounds, Dealer has won five times!"
+      .center(60)
   elsif round_state[:player] >= 5
     puts "After #{round_state[:rounds]} rounds, Player has won five times!"
+      .center(60)
   end
   puts ''
 end
@@ -146,30 +167,19 @@ def enter_to_continue
   gets
 end
 
-# main loop
 round_state = { rounds: 1, player: 0, dealer: 0, ties: 0 }
 round_winner = nil
 
-puts "******************************"
-puts '*                            *'
-puts "*   Welcome to Twenty-One    *"
-puts '*                            *'
-puts "******************************"
-sleep 2
-puts ''
-puts "First player to win five rounds wins the game."
-sleep 3
+greetings()
 
+# main loop
 loop do
   system 'clear'
-  deck = initialize_deck
+  deck = initialize_deck()
   player_cards = []
   dealer_cards = []
 
-  2.times do
-    player_cards << deck.pop
-    dealer_cards << deck.pop
-  end
+  deal_initial_cards(deck, player_cards, dealer_cards)
 
   player_total = total(player_cards)
   dealer_total = total(dealer_cards)
@@ -204,7 +214,7 @@ loop do
     update_score_board!(round_winner, round_state)
 
     display_end_of_round_results(player_cards, dealer_cards, player_total,
-                            dealer_total, round_state)
+                                 dealer_total, round_state)
 
     if grandwinner?(round_state)
       declare_grand_winner(round_state)
@@ -236,7 +246,7 @@ loop do
     update_score_board!(round_winner, round_state)
 
     display_end_of_round_results(player_cards, dealer_cards, player_total,
-                            dealer_total, round_state)
+                                 dealer_total, round_state)
 
     if grandwinner?(round_state)
       declare_grand_winner(round_state)
@@ -251,12 +261,12 @@ loop do
     puts "Dealer stays at #{dealer_total}"
   end
 
-  # both player and dealer stays; compare cards
+  # both player and dealer stay; compare cards
   round_winner = detect_round_winner(player_total, dealer_total)
   update_score_board!(round_winner, round_state)
 
   display_end_of_round_results(player_cards, dealer_cards, player_total,
-                          dealer_total, round_state)
+                               dealer_total, round_state)
 
   if grandwinner?(round_state)
     declare_grand_winner(round_state)
