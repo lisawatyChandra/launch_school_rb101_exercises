@@ -181,7 +181,8 @@ loop do
       declare_grand_winner(round_state)
       reset(round_state)
       play_again? ? next : break
-    elsif enter_to_continue_and_increment_rounds(round_state)
+    else
+      enter_to_continue_and_increment_rounds(round_state)
       next
     end
   else
@@ -211,7 +212,8 @@ loop do
       declare_grand_winner(round_state)
       reset(round_state)
       play_again? ? next : break
-    elsif enter_to_continue_and_increment_rounds(round_state)
+    else
+      enter_to_continue_and_increment_rounds(round_state)
       next
     end
   else
