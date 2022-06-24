@@ -110,6 +110,13 @@ def display_round_results(round_state)
   puts "************************************************************"
 end
 
+def at_end_of_round_display(player_cards, dealer_cards, player_total,
+                            dealer_total, round_state)
+  display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
+  declare_round_winner(player_total, dealer_total)
+  display_round_results(round_state)
+end
+
 def declare_grand_winner(round_state)
   puts ''
   if round_state[:dealer] >= 5
@@ -190,11 +197,11 @@ loop do
   end
 
   if busted?(player_total) # when player_total > 21
-    display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
     round_winner = detect_round_winner(player_total, dealer_total)
     update_score_board!(round_winner, round_state)
-    declare_round_winner(player_total, dealer_total)
-    display_round_results(round_state)
+
+    at_end_of_round_display(player_cards, dealer_cards, player_total,
+                            dealer_total, round_state)
 
     if grandwinner?(round_state)
       declare_grand_winner(round_state)
@@ -221,11 +228,11 @@ loop do
   end
 
   if busted?(dealer_total) # when dealer_total > 21
-    display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
     round_winner = detect_round_winner(player_total, dealer_total)
     update_score_board!(round_winner, round_state)
-    declare_round_winner(player_total, dealer_total)
-    display_round_results(round_state)
+
+    at_end_of_round_display(player_cards, dealer_cards, player_total,
+                            dealer_total, round_state)
 
     if grandwinner?(round_state)
       declare_grand_winner(round_state)
@@ -240,11 +247,11 @@ loop do
   end
 
   # both player and dealer stays; compare cards
-  display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
   round_winner = detect_round_winner(player_total, dealer_total)
   update_score_board!(round_winner, round_state)
-  declare_round_winner(player_total, dealer_total)
-  display_round_results(round_state)
+
+  at_end_of_round_display(player_cards, dealer_cards, player_total,
+                          dealer_total, round_state)
 
   if grandwinner?(round_state)
     declare_grand_winner(round_state)
