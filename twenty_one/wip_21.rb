@@ -1,3 +1,5 @@
+require 'pry'
+
 SUITS = %w(♥ ♦ ♣ ♠)
 VALUES = %w(2 3 4 5 6 7 8 9 10 J Q K A)
 
@@ -28,9 +30,6 @@ def total(cards)
 end
 
 def string_of_hand(cards)
-  # cards.map do |card|
-  #   card.join
-  # end.join(', ')
   cards.map(&:join).join(', ')
 end
 
@@ -92,21 +91,25 @@ end
 
 def update_score_board!(round_winner, round_state)
   case round_winner
-  when :player then round_state[:player] += 1
-  when :dealer then round_state[:dealer] += 1
+  when :player        then round_state[:player] += 1
+  when :dealer_busted then round_state[:player] += 1
+  when :dealer        then round_state[:dealer] += 1
+  when :player_busted then round_state[:dealer] += 1
+  when :tie           then round_state[:ties] += 1
   end
 end
 
 def display_round_results(round_state)
   puts ''
-  puts "*********************************************"
-  puts '*                                           *'
+  puts "************************************************************"
+  puts '*                                                          *'
   puts "* Round #{round_state[:rounds]} scores: "
     .concat("PLAYER - #{round_state[:player]}, ")
-    .concat("DEALER - #{round_state[:dealer]} *")
-    .center(45)
-  puts '*                                           *'
-  puts "*********************************************"
+    .concat("DEALER - #{round_state[:dealer]}, ")
+    .concat("TIES - #{round_state[:ties]} *")
+    .center(60)
+  puts '*                                                          *'
+  puts "************************************************************"
 end
 
 def declare_grand_winner(round_state)
@@ -136,7 +139,8 @@ def enter_to_continue_and_increment_rounds(round_state)
 end
 
 # main loop
-round_state = { rounds: 1, player: 0, dealer: 0 }
+round_state = { rounds: 1, player: 0, dealer: 0, ties: 0 }
+round_winner = nil
 
 puts "******************************"
 puts '*                            *'
@@ -189,7 +193,8 @@ loop do
 
   if busted?(player_total)
     display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
-    update_score_board!(detect_round_winner(player_total, dealer_total), round_state)
+    round_winner = detect_round_winner(player_total, dealer_total)
+    update_score_board!(round_winner, round_state)
     declare_round_winner(player_total, dealer_total)
     display_round_results(round_state)
 
@@ -219,7 +224,8 @@ loop do
 
   if busted?(dealer_total)
     display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
-    update_score_board!(detect_round_winner(player_total, dealer_total), round_state)
+    round_winner = detect_round_winner(player_total, dealer_total)
+    update_score_board!(round_winner, round_state)
     declare_round_winner(player_total, dealer_total)
     display_round_results(round_state)
 
@@ -237,9 +243,8 @@ loop do
 
   # both player and dealer stays; compare cards
   display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
-
-  update_score_board!(detect_round_winner(player_total, dealer_total), round_state)
-
+  round_winner = detect_round_winner(player_total, dealer_total)
+  update_score_board!(round_winner, round_state)
   declare_round_winner(player_total, dealer_total)
   display_round_results(round_state)
 
