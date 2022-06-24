@@ -1,5 +1,3 @@
-require 'pry'
-
 SUITS = %w(♥ ♦ ♣ ♠)
 VALUES = %w(2 3 4 5 6 7 8 9 10 J Q K A)
 
@@ -71,9 +69,11 @@ def declare_round_winner(player_total, dealer_total)
 end
 
 def play_again?
-  puts "**************************************"
-  puts "Would you like to play again? (y or n)"
-  puts "**************************************"
+  puts "******************************************"
+  puts '*                                        *'
+  puts "* Would you like to play again? (y or n) *"
+  puts '*                                        *'
+  puts "******************************************"
   answer = gets.chomp
   sleep 0.25
   answer.downcase.start_with?('y')
@@ -86,23 +86,29 @@ def display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
   puts ''
   puts "Player has: #{string_of_hand(player_cards)} "
     .concat("for a total of #{player_total}")
+  puts ''
 end
 
 def display_round_results(round_state)
   puts ''
-  puts "Round #{round_state[:rounds]} scores: "
+  puts "*********************************************"
+  puts '*                                           *'
+  puts "* Round #{round_state[:rounds]} scores: "
     .concat("PLAYER - #{round_state[:player]}, ")
-    .concat("DEALER - #{round_state[:dealer]}")
-  puts ''
-  puts "**************************************"
+    .concat("DEALER - #{round_state[:dealer]} *")
+    .center(45)
+  puts '*                                           *'
+  puts "*********************************************"
 end
 
 def declare_grand_winner(round_state)
+  puts ''
   if round_state[:dealer] >= 5
     puts "After #{round_state[:rounds]} rounds, Dealer has won five times!"
   elsif round_state[:player] >= 5
     puts "After #{round_state[:rounds]} rounds, Player has won five times!"
   end
+  puts ''
 end
 
 def grandwinner?(round_state)
@@ -125,9 +131,12 @@ end
 round_state = { rounds: 1, player: 0, dealer: 0 }
 
 puts "******************************"
+puts '*                            *'
 puts "*   Welcome to Twenty-One    *"
+puts '*                            *'
 puts "******************************"
 sleep 2
+puts ''
 puts "First player to win five rounds wins the game."
 sleep 3
 
@@ -147,9 +156,9 @@ loop do
 
   puts "player cards: #{player_cards[0].join}, #{player_cards[1].join}"
   puts "dealer_cards: #{dealer_cards[0].join} and ?"
-  puts ''
 
   # player turn
+  puts ''
   loop do
     puts "Player turn..."
     player_turn = nil
@@ -173,7 +182,6 @@ loop do
   if busted?(player_total)
     round_state[:dealer] += 1
     display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
-    puts ''
     declare_round_winner(player_total, dealer_total)
     display_round_results(round_state)
 
@@ -204,7 +212,6 @@ loop do
   if busted?(dealer_total)
     round_state[:player] += 1
     display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
-    puts ''
     declare_round_winner(player_total, dealer_total)
     display_round_results(round_state)
 
@@ -229,7 +236,6 @@ loop do
   when :dealer then round_state[:dealer] += 1
   end
 
-  puts ''
   declare_round_winner(player_total, dealer_total)
   display_round_results(round_state)
 
