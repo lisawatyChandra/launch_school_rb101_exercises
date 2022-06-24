@@ -230,8 +230,8 @@ loop do
   # both player and dealer stays; compare cards
   display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
 
-  round_result = detect_round_winner(player_total, dealer_total)
-  case round_result
+  round_winner = detect_round_winner(player_total, dealer_total)
+  case round_winner
   when :player then round_state[:player] += 1
   when :dealer then round_state[:dealer] += 1
   end
