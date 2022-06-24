@@ -28,9 +28,10 @@ def total(cards)
 end
 
 def string_of_hand(cards)
-  cards.map do |card|
-    card.join
-  end.join(', ')
+  # cards.map do |card|
+  #   card.join
+  # end.join(', ')
+  cards.map(&:join).join(', ')
 end
 
 def busted?(total)
@@ -87,6 +88,13 @@ def display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
   puts "Player has: #{string_of_hand(player_cards)} "
     .concat("for a total of #{player_total}")
   puts ''
+end
+
+def update_score_board!(round_winner, round_state)
+  case round_winner
+  when :player then round_state[:player] += 1
+  when :dealer then round_state[:dealer] += 1
+  end
 end
 
 def display_round_results(round_state)
@@ -180,8 +188,8 @@ loop do
   end
 
   if busted?(player_total)
-    round_state[:dealer] += 1
     display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
+    update_score_board!(detect_round_winner(player_total, dealer_total), round_state)
     declare_round_winner(player_total, dealer_total)
     display_round_results(round_state)
 
@@ -210,8 +218,8 @@ loop do
   end
 
   if busted?(dealer_total)
-    round_state[:player] += 1
     display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
+    update_score_board!(detect_round_winner(player_total, dealer_total), round_state)
     declare_round_winner(player_total, dealer_total)
     display_round_results(round_state)
 
@@ -230,11 +238,7 @@ loop do
   # both player and dealer stays; compare cards
   display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
 
-  round_winner = detect_round_winner(player_total, dealer_total)
-  case round_winner
-  when :player then round_state[:player] += 1
-  when :dealer then round_state[:dealer] += 1
-  end
+  update_score_board!(detect_round_winner(player_total, dealer_total), round_state)
 
   declare_round_winner(player_total, dealer_total)
   display_round_results(round_state)
