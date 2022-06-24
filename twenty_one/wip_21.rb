@@ -30,11 +30,14 @@ def total(cards)
 end
 
 def string_of_hand(cards)
-  hand_array = []
-  0.upto(cards.size - 1) do |i|
-    hand_array += [cards[i].join]
-  end
-  hand_array.join(', ')
+  # hand_array = []
+  # 0.upto(cards.size - 1) do |i|
+  #   hand_array += [cards[i].join]
+  # end
+  # hand_array.join(', ')
+  cards.map do |card|
+    card.join
+  end.join(', ')
 end
 
 def busted?(total)
