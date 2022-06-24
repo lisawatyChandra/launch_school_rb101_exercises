@@ -17,7 +17,7 @@ def initialize_deck
   SUITS.product(VALUES).shuffle
 end
 
-def deal_initial_cards(deck, player_cards, dealer_cards)
+def deal_initial_cards!(deck, player_cards, dealer_cards)
   2.times do
     player_cards << deck.pop
     dealer_cards << deck.pop
@@ -88,7 +88,7 @@ end
 def play_again?
   puts "************************************************************"
   puts ''
-  puts "#{'Would you like to play again? (y or n)'.center(60)}"
+  puts 'Would you like to play again? (y or n)'.center(60)
   puts ''
   puts "************************************************************"
   answer = gets.chomp
@@ -152,13 +152,13 @@ def grandwinner?(round_state)
   round_state[:player] >= 5 || round_state[:dealer] >= 5
 end
 
-def reset(round_state)
+def reset!(round_state)
   round_state[:rounds] = 1
   round_state[:player] = 0
   round_state[:dealer] = 0
 end
 
-def increment_rounds(round_state)
+def increment_rounds!(round_state)
   round_state[:rounds] += 1
 end
 
@@ -175,7 +175,7 @@ greetings()
 # main loop
 loop do
   system 'clear'
-  deck = initialize_deck()
+  deck = initialize_deck!()
   player_cards = []
   dealer_cards = []
 
@@ -218,10 +218,10 @@ loop do
 
     if grandwinner?(round_state)
       declare_grand_winner(round_state)
-      reset(round_state)
+      reset!(round_state)
       play_again? ? next : break
     else
-      increment_rounds(round_state)
+      increment_rounds!(round_state)
       enter_to_continue()
       next
     end
@@ -250,10 +250,10 @@ loop do
 
     if grandwinner?(round_state)
       declare_grand_winner(round_state)
-      reset(round_state)
+      reset!(round_state)
       play_again? ? next : break
     else
-      increment_rounds(round_state)
+      increment_rounds!(round_state)
       enter_to_continue()
       next
     end
@@ -270,10 +270,10 @@ loop do
 
   if grandwinner?(round_state)
     declare_grand_winner(round_state)
-    reset(round_state)
+    reset!(round_state)
     break unless play_again?
   else
-    increment_rounds(round_state)
+    increment_rounds!(round_state)
     enter_to_continue()
   end
 end
