@@ -1,3 +1,5 @@
+require 'pry'
+
 SUITS = %w(♥ ♦ ♣ ♠)
 VALUES = %w(2 3 4 5 6 7 8 9 10 J Q K A)
 
@@ -25,6 +27,14 @@ def total(cards)
   end
 
   sum
+end
+
+def string_of_hand(cards)
+  hand_array = []
+  0.upto(cards.size - 1) do |i|
+    hand_array += [cards[i].join]
+  end
+  hand_array.join(', ')
 end
 
 def busted?(total)
@@ -67,19 +77,24 @@ def play_again?
   puts "Would you like to play again? (y or n)"
   puts "**************************************"
   answer = gets.chomp
-  sleep 1
+  sleep 0.25
   answer.downcase.start_with?('y')
 end
 
 def display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
   puts ''
-  puts "Dealer has #{dealer_cards} for a total of #{dealer_total}"
-  puts "Player has #{player_cards} for a total of #{player_total}"
+  puts "Dealer has: #{string_of_hand(dealer_cards)} "
+    .concat("for a total of #{dealer_total}")
+  puts ''
+  puts "Player has: #{string_of_hand(player_cards)} "
+    .concat("for a total of #{player_total}")
 end
 
 def display_round_results(round_state)
   puts ''
-  puts "Round #{round_state[:rounds]} scores: PLAYER - #{round_state[:player]}, DEALER - #{round_state[:dealer]}"
+  puts "Round #{round_state[:rounds]} scores: "
+    .concat("PLAYER - #{round_state[:player]}, ")
+    .concat("DEALER - #{round_state[:dealer]}")
   puts ''
   puts "**************************************"
 end
@@ -128,12 +143,12 @@ loop do
     player_cards << deck.pop
     dealer_cards << deck.pop
   end
-  
+
   player_total = total(player_cards)
   dealer_total = total(dealer_cards)
 
-  puts "player cards: #{player_cards}"
-  puts "dealer_cards: #{dealer_cards[0]} and ?"
+  puts "player cards: #{player_cards[0].join}, #{player_cards[1].join}"
+  puts "dealer_cards: #{dealer_cards[0].join} and ?"
   puts ''
 
   # player turn
@@ -150,7 +165,7 @@ loop do
     if player_turn == 'h'
       puts "You chose to hit!"
       player_cards << deck.pop
-      puts "player cards are now: #{player_cards}"
+      puts "player cards are now: #{string_of_hand(player_cards)}"
       player_total = total(player_cards)
     end
 
@@ -182,7 +197,7 @@ loop do
     puts "Dealer turn..."
     puts "Dealer hits!"
     dealer_cards << deck.pop
-    puts "Dealer cards are now: #{dealer_cards}"
+    puts "Dealer cards are now: #{string_of_hand(dealer_cards)}"
     dealer_total = total(dealer_cards)
     sleep 3.5
   end
