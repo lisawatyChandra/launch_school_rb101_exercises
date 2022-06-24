@@ -110,11 +110,11 @@ def display_round_results(round_state)
   puts "************************************************************"
 end
 
-def at_end_of_round_display(player_cards, dealer_cards, player_total,
+def display_end_of_round_results(player_cards, dealer_cards, player_total,
                             dealer_total, round_state)
   display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
   declare_round_winner(player_total, dealer_total)
-  display_round_results(round_state)
+  display_scoreboard(round_state)
 end
 
 def declare_grand_winner(round_state)
@@ -137,8 +137,11 @@ def reset(round_state)
   round_state[:dealer] = 0
 end
 
-def enter_to_continue_and_increment_rounds(round_state)
+def increment_rounds(round_state)
   round_state[:rounds] += 1
+end
+
+def enter_to_continue
   puts "Press Enter to continue: "
   gets
 end
@@ -200,7 +203,7 @@ loop do
     round_winner = detect_round_winner(player_total, dealer_total)
     update_score_board!(round_winner, round_state)
 
-    at_end_of_round_display(player_cards, dealer_cards, player_total,
+    display_end_of_round_results(player_cards, dealer_cards, player_total,
                             dealer_total, round_state)
 
     if grandwinner?(round_state)
@@ -208,7 +211,8 @@ loop do
       reset(round_state)
       play_again? ? next : break
     else
-      enter_to_continue_and_increment_rounds(round_state)
+      increment_rounds(round_state)
+      enter_to_continue()
       next
     end
   else # when player_total <= 21
@@ -231,7 +235,7 @@ loop do
     round_winner = detect_round_winner(player_total, dealer_total)
     update_score_board!(round_winner, round_state)
 
-    at_end_of_round_display(player_cards, dealer_cards, player_total,
+    display_end_of_round_results(player_cards, dealer_cards, player_total,
                             dealer_total, round_state)
 
     if grandwinner?(round_state)
@@ -239,7 +243,8 @@ loop do
       reset(round_state)
       play_again? ? next : break
     else
-      enter_to_continue_and_increment_rounds(round_state)
+      increment_rounds(round_state)
+      enter_to_continue()
       next
     end
   else # when dealer_total >= 17 && dealer_total <= 21
@@ -250,7 +255,7 @@ loop do
   round_winner = detect_round_winner(player_total, dealer_total)
   update_score_board!(round_winner, round_state)
 
-  at_end_of_round_display(player_cards, dealer_cards, player_total,
+  display_end_of_round_results(player_cards, dealer_cards, player_total,
                           dealer_total, round_state)
 
   if grandwinner?(round_state)
@@ -258,7 +263,8 @@ loop do
     reset(round_state)
     break unless play_again?
   else
-    enter_to_continue_and_increment_rounds(round_state)
+    increment_rounds(round_state)
+    enter_to_continue()
   end
 end
 
