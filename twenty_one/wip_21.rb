@@ -31,7 +31,7 @@ def busted?(total)
   total > 21
 end
 
-def detect_result(player_total, dealer_total)
+def detect_round_winner(player_total, dealer_total)
   if player_total > 21
     :player_busted
   elsif dealer_total > 21
@@ -45,8 +45,8 @@ def detect_result(player_total, dealer_total)
   end
 end
 
-def display_results(player_total, dealer_total)
-  result = detect_result(player_total, dealer_total)
+def declare_round_winner(player_total, dealer_total)
+  result = detect_round_winner(player_total, dealer_total)
 
   case result
   when :player_busted
@@ -67,13 +67,21 @@ def play_again?
   puts "Would you like to play again? (y or n)"
   puts "**************************************"
   answer = gets.chomp
+  sleep 1
   answer.downcase.start_with?('y')
 end
 
-def compare_cards(player_cards, dealer_cards, player_total, dealer_total)
+def display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
   puts ''
   puts "Dealer has #{dealer_cards} for a total of #{dealer_total}"
   puts "Player has #{player_cards} for a total of #{player_total}"
+end
+
+def display_round_results(round_state)
+  puts ''
+  puts "Round #{round_state[:rounds]} scores: PLAYER - #{round_state[:player]}, DEALER - #{round_state[:dealer]}"
+  puts ''
+  puts "**************************************"
 end
 
 def declare_grand_winner(round_state)
@@ -94,12 +102,20 @@ def reset(round_state)
   round_state[:dealer] = 0
 end
 
+def enter_to_continue(round_state)
+  round_state[:rounds] += 1
+  puts "Press Enter to continue: "
+  gets
+end
+
 # main loop
 round_state = { rounds: 1, player: 0, dealer: 0 }
 
 puts "******************************"
-puts "~~~ Welcome to Twenty-One ~~~"
+puts "*   Welcome to Twenty-One    *"
 puts "******************************"
+sleep 2
+puts "First player to win five rounds wins the game."
 sleep 3
 
 loop do
@@ -143,24 +159,16 @@ loop do
 
   if busted?(player_total)
     round_state[:dealer] += 1
-    # compare_cards(player_cards, dealer_cards, player_total, dealer_total)
+    display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
     puts ''
-    display_results(player_total, dealer_total)
-    puts ''
-    puts "Round #{round_state[:rounds]} scores: PLAYER - #{round_state[:player]}, DEALER - #{round_state[:dealer]}"
-    puts ''
-    puts "**************************************"
+    declare_round_winner(player_total, dealer_total)
+    display_round_results(round_state)
 
     if grandwinner?(round_state)
       declare_grand_winner(round_state)
       reset(round_state)
       play_again? ? next : break
-    end
-
-    round_state[:rounds] += 1
-    puts "Press Enter to continue: "
-    enter_to_continue = gets
-    if enter_to_continue
+    elsif enter_to_continue(round_state)
       next
     end
   else
@@ -181,24 +189,16 @@ loop do
 
   if busted?(dealer_total)
     round_state[:player] += 1
-    compare_cards(player_cards, dealer_cards, player_total, dealer_total)
+    display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
     puts ''
-    display_results(player_total, dealer_total)
-    puts ''
-    puts "Round #{round_state[:rounds]} scores: PLAYER - #{round_state[:player]}, DEALER - #{round_state[:dealer]}"
-    puts ''
-    puts "**************************************"
+    declare_round_winner(player_total, dealer_total)
+    display_round_results(round_state)
 
     if grandwinner?(round_state)
       declare_grand_winner(round_state)
       reset(round_state)
       play_again? ? next : break
-    end
-
-    round_state[:rounds] += 1
-    puts "Press Enter to continue: "
-    enter_to_continue = gets
-    if enter_to_continue
+    elsif enter_to_continue(round_state)
       next
     end
   else
@@ -206,32 +206,26 @@ loop do
   end
 
   # both player and dealer stays; compare cards
-  compare_cards(player_cards, dealer_cards, player_total, dealer_total)
+  display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
 
-  round_result = detect_result(player_total, dealer_total)
+  round_result = detect_round_winner(player_total, dealer_total)
   case round_result
   when :player then round_state[:player] += 1
   when :dealer then round_state[:dealer] += 1
   end
 
   puts ''
-  display_results(player_total, dealer_total)
-
-  puts ''
-  puts "Round #{round_state[:rounds]} scores: PLAYER - #{round_state[:player]}, DEALER - #{round_state[:dealer]}"
-  puts ''
-  puts "**************************************"
+  declare_round_winner(player_total, dealer_total)
+  display_round_results(round_state)
 
   if grandwinner?(round_state)
     declare_grand_winner(round_state)
     reset(round_state)
     break unless play_again?
   else
-    round_state[:rounds] += 1
-    puts "Press Enter to continue: "
-    gets
+    enter_to_continue(round_state)
   end
 end
 
 puts ''
-puts "Thank you for playing Twenty-One! Goodbye!"
+puts "Thank you for playing Twenty-One. Goodbye!"
