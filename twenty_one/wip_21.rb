@@ -102,7 +102,7 @@ def reset(round_state)
   round_state[:dealer] = 0
 end
 
-def enter_to_continue(round_state)
+def enter_to_continue_and_increment_rounds(round_state)
   round_state[:rounds] += 1
   puts "Press Enter to continue: "
   gets
@@ -168,7 +168,7 @@ loop do
       declare_grand_winner(round_state)
       reset(round_state)
       play_again? ? next : break
-    elsif enter_to_continue(round_state)
+    elsif enter_to_continue_and_increment_rounds(round_state)
       next
     end
   else
@@ -198,7 +198,7 @@ loop do
       declare_grand_winner(round_state)
       reset(round_state)
       play_again? ? next : break
-    elsif enter_to_continue(round_state)
+    elsif enter_to_continue_and_increment_rounds(round_state)
       next
     end
   else
@@ -223,7 +223,7 @@ loop do
     reset(round_state)
     break unless play_again?
   else
-    enter_to_continue(round_state)
+    enter_to_continue_and_increment_rounds(round_state)
   end
 end
 
