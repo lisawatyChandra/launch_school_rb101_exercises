@@ -1,5 +1,3 @@
-require 'pry'
-
 SUITS = %w(♥ ♦ ♣ ♠)
 VALUES = %w(2 3 4 5 6 7 8 9 10 J Q K A)
 
@@ -184,14 +182,14 @@ loop do
     if player_turn == 'h'
       puts "You chose to hit!"
       player_cards << deck.pop
-      puts "player cards are now: #{string_of_hand(player_cards)}"
       player_total = total(player_cards)
+      puts "player cards are now: #{string_of_hand(player_cards)}"
     end
 
     break if player_turn == 's' || busted?(player_total)
   end
 
-  if busted?(player_total)
+  if busted?(player_total) # when player_total > 21
     display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
     round_winner = detect_round_winner(player_total, dealer_total)
     update_score_board!(round_winner, round_state)
@@ -206,7 +204,7 @@ loop do
       enter_to_continue_and_increment_rounds(round_state)
       next
     end
-  else
+  else # when player_total <= 21
     puts "You chose to stay at #{player_total}"
   end
 
@@ -217,12 +215,12 @@ loop do
     puts "Dealer turn..."
     puts "Dealer hits!"
     dealer_cards << deck.pop
-    puts "Dealer cards are now: #{string_of_hand(dealer_cards)}"
     dealer_total = total(dealer_cards)
+    puts "Dealer cards are now: #{string_of_hand(dealer_cards)}"
     sleep 3.5
   end
 
-  if busted?(dealer_total)
+  if busted?(dealer_total) # when dealer_total > 21
     display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
     round_winner = detect_round_winner(player_total, dealer_total)
     update_score_board!(round_winner, round_state)
@@ -237,7 +235,7 @@ loop do
       enter_to_continue_and_increment_rounds(round_state)
       next
     end
-  else
+  else # when dealer_total >= 17 && dealer_total <= 21
     puts "Dealer stays at #{dealer_total}"
   end
 
