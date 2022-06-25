@@ -9,11 +9,11 @@ def greetings
   puts "************************************************************"
   sleep 2
   puts ''
-  puts "First player to win five rounds wins the game."
+  puts "First player to win five rounds wins the game.".center(60)
   sleep 3
 end
 
-def initialize_deck
+def initialize_deck!
   SUITS.product(VALUES).shuffle
 end
 
@@ -46,6 +46,42 @@ def total(cards)
   sum
 end
 
+def player_hit_or_stay(deck, player_cards, card_totals)
+  puts ''
+  loop do
+    puts "Player turn..."
+    player_turn = nil
+    loop do
+      puts "Would you like to (h)it or (s)tay?"
+      player_turn = gets.chomp.downcase
+      break if ['h', 's'].include?(player_turn)
+      puts "Sorry, must enter 'h' or 's'"
+    end
+
+    if player_turn == 'h'
+      puts "You chose to hit!"
+      player_cards << deck.pop
+      card_totals[:player_total] = total(player_cards)
+      puts "player cards are now: #{string_of_hand(player_cards)}"
+    end
+
+    break if player_turn == 's' || busted?(card_totals[:player_total])
+  end
+end
+
+def dealer_hit_or_stay(deck, dealer_cards, card_totals)
+  puts ''
+  loop do
+    break if card_totals[:dealer_total] >= 17
+    puts "Dealer turn..."
+    puts "Dealer hits!"
+    dealer_cards << deck.pop
+    card_totals[:dealer_total] = total(dealer_cards)
+    puts "Dealer cards are now: #{string_of_hand(dealer_cards)}"
+    sleep 2
+  end
+end
+
 def string_of_hand(cards)
   cards.map(&:join).join(', ')
 end
@@ -54,34 +90,34 @@ def busted?(total)
   total > 21
 end
 
-def detect_round_winner(player_total, dealer_total)
-  if player_total > 21
+def detect_round_winner(card_totals)
+  if card_totals[:player_total] > 21
     :player_busted
-  elsif dealer_total > 21
+  elsif card_totals[:dealer_total] > 21
     :dealer_busted
-  elsif player_total > dealer_total
+  elsif card_totals[:player_total] > card_totals[:dealer_total]
     :player
-  elsif player_total < dealer_total
+  elsif card_totals[:player_total] < card_totals[:dealer_total]
     :dealer
   else
     :tie
   end
 end
 
-def declare_round_winner(player_total, dealer_total)
-  result = detect_round_winner(player_total, dealer_total)
+def declare_round_winner(card_totals)
+  result = detect_round_winner(card_totals)
 
   case result
   when :player_busted
-    puts "Player busted! Dealer wins!"
+    puts "Player busted! Dealer wins this round!"
   when :dealer_busted
-    puts "Dealer busted! Player wins!"
+    puts "Dealer busted! Player wins this round!"
   when :player
-    puts "Player wins!"
+    puts "Player wins this round!"
   when :dealer
-    puts "Dealer wins!"
+    puts "Dealer wins this round!"
   else
-    puts "It's a tie!"
+    puts "It's a tie this round!"
   end
 end
 
@@ -96,13 +132,13 @@ def play_again?
   answer.downcase.start_with?('y')
 end
 
-def display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
+def display_both_hands(player_cards, dealer_cards, card_totals)
   puts ''
   puts "Dealer has: #{string_of_hand(dealer_cards)} "
-    .concat("for a total of #{dealer_total}")
+    .concat("for a total of #{card_totals[:dealer_total]}")
   puts ''
   puts "Player has: #{string_of_hand(player_cards)} "
-    .concat("for a total of #{player_total}")
+    .concat("for a total of #{card_totals[:player_total]}")
   puts ''
 end
 
@@ -129,10 +165,18 @@ def display_scoreboard(round_state)
   puts "************************************************************"
 end
 
-def display_end_of_round_results(player_cards, dealer_cards, player_total,
-                                 dealer_total, round_state)
-  display_both_hands(player_cards, dealer_cards, player_total, dealer_total)
-  declare_round_winner(player_total, dealer_total)
+def end_of_round_calculations(card_totals, round_state, 
+                              player_cards, dealer_cards)
+  round_winner = detect_round_winner(card_totals)
+  update_score_board!(round_winner, round_state)
+  display_end_of_round_results(player_cards, dealer_cards, 
+                               card_totals, round_state)
+end
+
+def display_end_of_round_results(player_cards, dealer_cards,
+                                 card_totals, round_state)
+  display_both_hands(player_cards, dealer_cards, card_totals)
+  declare_round_winner(card_totals)
   display_scoreboard(round_state)
 end
 
@@ -148,6 +192,17 @@ def declare_grand_winner(round_state)
   puts ''
 end
 
+def determine_grandwinner(round_state)
+  if grandwinner?(round_state)
+    declare_grand_winner(round_state)
+    # reset!(round_state)
+    enter_to_continue()
+  else
+    increment_rounds!(round_state)
+    enter_to_continue()
+  end
+end
+
 def grandwinner?(round_state)
   round_state[:player] >= 5 || round_state[:dealer] >= 5
 end
@@ -156,6 +211,7 @@ def reset!(round_state)
   round_state[:rounds] = 1
   round_state[:player] = 0
   round_state[:dealer] = 0
+  round_state[:ties] = 0
 end
 
 def increment_rounds!(round_state)
@@ -163,7 +219,7 @@ def increment_rounds!(round_state)
 end
 
 def enter_to_continue
-  puts "Press Enter to continue: "
+  puts "Press Enter to continue: ".center(60)
   gets
 end
 
@@ -179,102 +235,59 @@ loop do
   player_cards = []
   dealer_cards = []
 
-  deal_initial_cards(deck, player_cards, dealer_cards)
+  deal_initial_cards!(deck, player_cards, dealer_cards)
 
-  player_total = total(player_cards)
-  dealer_total = total(dealer_cards)
+  card_totals = {}
+  card_totals[:player_total] = total(player_cards)
+  card_totals[:dealer_total] = total(dealer_cards)
 
-  puts "player cards: #{player_cards[0].join}, #{player_cards[1].join}"
-  puts "dealer_cards: #{dealer_cards[0].join} and ?"
+  puts "player has: #{player_cards[0].join}, #{player_cards[1].join}"
+  puts "dealer has: #{dealer_cards[0].join} and ?"
 
   # player turn
-  puts ''
-  loop do
-    puts "Player turn..."
-    player_turn = nil
-    loop do
-      puts "Would you like to (h)it or (s)tay?"
-      player_turn = gets.chomp.downcase
-      break if ['h', 's'].include?(player_turn)
-      puts "Sorry, must enter 'h' or 's'"
-    end
+  player_hit_or_stay(deck, player_cards, card_totals)
 
-    if player_turn == 'h'
-      puts "You chose to hit!"
-      player_cards << deck.pop
-      player_total = total(player_cards)
-      puts "player cards are now: #{string_of_hand(player_cards)}"
-    end
-
-    break if player_turn == 's' || busted?(player_total)
-  end
-
-  if busted?(player_total) # when player_total > 21
-    round_winner = detect_round_winner(player_total, dealer_total)
-    update_score_board!(round_winner, round_state)
-
-    display_end_of_round_results(player_cards, dealer_cards, player_total,
-                                 dealer_total, round_state)
+  if busted?(card_totals[:player_total])
+    end_of_round_calculations(card_totals, round_state, 
+                              player_cards, dealer_cards)
+    determine_grandwinner(round_state)
 
     if grandwinner?(round_state)
-      declare_grand_winner(round_state)
       reset!(round_state)
       play_again? ? next : break
     else
-      increment_rounds!(round_state)
-      enter_to_continue()
       next
     end
-  else # when player_total <= 21
-    puts "You chose to stay at #{player_total}"
+  else
+    puts "You chose to stay at #{card_totals[:player_total]}"
   end
 
   # dealer turn
-  puts ''
-  loop do
-    break if dealer_total >= 17
-    puts "Dealer turn..."
-    puts "Dealer hits!"
-    dealer_cards << deck.pop
-    dealer_total = total(dealer_cards)
-    puts "Dealer cards are now: #{string_of_hand(dealer_cards)}"
-    sleep 3.5
-  end
+  dealer_hit_or_stay(deck, dealer_cards, card_totals)
 
-  if busted?(dealer_total) # when dealer_total > 21
-    round_winner = detect_round_winner(player_total, dealer_total)
-    update_score_board!(round_winner, round_state)
-
-    display_end_of_round_results(player_cards, dealer_cards, player_total,
-                                 dealer_total, round_state)
+  if busted?(card_totals[:dealer_total]) # when dealer_total > 21
+    end_of_round_calculations(card_totals, round_state, 
+                              player_cards, dealer_cards)
+    determine_grandwinner(round_state)
 
     if grandwinner?(round_state)
-      declare_grand_winner(round_state)
       reset!(round_state)
       play_again? ? next : break
     else
-      increment_rounds!(round_state)
-      enter_to_continue()
       next
     end
-  else # when dealer_total >= 17 && dealer_total <= 21
-    puts "Dealer stays at #{dealer_total}"
+  else
+    puts "Dealer stays at #{card_totals[:dealer_total]}"
   end
 
   # both player and dealer stay; compare cards
-  round_winner = detect_round_winner(player_total, dealer_total)
-  update_score_board!(round_winner, round_state)
-
-  display_end_of_round_results(player_cards, dealer_cards, player_total,
-                               dealer_total, round_state)
+  end_of_round_calculations(card_totals, round_state, 
+                            player_cards, dealer_cards)
+  determine_grandwinner(round_state)
 
   if grandwinner?(round_state)
-    declare_grand_winner(round_state)
     reset!(round_state)
-    break unless play_again?
-  else
-    increment_rounds!(round_state)
-    enter_to_continue()
+    play_again? ? next : break
   end
 end
 
